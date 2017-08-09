@@ -23,8 +23,8 @@ class UserTestCase(unittest.TestCase):
         """Test API can create a user account (POST)
         """
         result = self.client().post('/auth/register', data=self.user)
-        self.assertEqual(result.status_code, 201)
-        self.assertIn('user1', str(result.data))
+        self.assertEqual(result.status_code, 201, msg="Page not returned")
+        self.assertIn('user1', str(result.data), msg="User not created")
 
     def tearDown(self):
         """Tear down initialized variables
