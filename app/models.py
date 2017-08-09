@@ -50,7 +50,7 @@ class Bucketlist(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     bucketlist_name = db.Column(db.String(255))
-    deadline_date = db.Column(db.DateTime)
+    deadline_date = db.Column(db.String(255))
     bucketlist_description = db.Column(db.String(255))
 
     def __init__(self, name, date, description):
