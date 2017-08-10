@@ -2,6 +2,7 @@
 """Application models for database population
 """
 from app import db
+from flask_bcrypt import Bcrypt
 
 class User(db.Model):
     """User table class
@@ -9,39 +10,29 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255))
-    email = db.Column(db.String(255))
+    username = db.Column(db.String(255), nullable=False, unique=True)
+    email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255))
+    bucketlists = db.relationship(
+        'Bucketlist', order_by='Bucketlist.id', cascade="all, delete-orphan")
 
     def __init__(self, name, email, password):
         """Initialize new user account
         """
         self.username = name
         self.email = email
-        self.password = password
+        self.password = Bcrypt().generate_password_hash(password).decode()
+
+    def password_is_valid(self, password):
+        """Check if password hash is in the records
+        """
+        return Bcrypt().check_password_hash(self.password, password)
 
     def save(self):
-        """Store new store new user account into database
+        """Store user account into database
         """
         db.session.add(self)
         db.session.commit()
-
-    @staticmethod
-    def get_all():
-        """Return all user accounts
-        """
-        return User.query.all()
-
-    def delete(self):
-        """Delete a user account from the database
-        """
-        db.session.delete(self)
-        db.session.commit()
-
-    def __repr__(self):
-        """Object instance of the class when it is queried
-        """
-        return "<User: {}>".format(self.name)
 
 class Bucketlist(db.Model):
     """Bucketlist table class
@@ -59,6 +50,8 @@ class Bucketlist(db.Model):
         self.bucketlist_name = name
         self.deadline_date = date
         self.bucketlist_description = description
+        activities = db.relationship(
+            'Activity', order_by='Activity.id', cascade="all, delete-orphan")
 
     def save(self):
         """Store new bucketlist into database
@@ -89,14 +82,12 @@ class Activity(db.Model):
     __tablename__ = "activities"
 
     id = db.Column(db.Integer, primary_key=True)
-    bucketlist_id = db.Column(db.Integer)
     activity_name = db.Column(db.String(255))
     activity_description = db.Column(db.String(255))
 
-    def __init__(self, bucketlist_id, name, description):
+    def __init__(self, name, description):
         """Initialize activity with bucketlist_id, name and description
         """
-        self.bucketlist_id = bucketlist_id
         self.activity_name = name
         self.activity_description = description
 
