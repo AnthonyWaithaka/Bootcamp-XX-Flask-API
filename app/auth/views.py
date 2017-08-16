@@ -51,11 +51,11 @@ class LoginView(MethodView):
                         'access_token':access_token.decode()
                     }
                     return make_response(jsonify(response)), 200
-                else:
-                    response = {
-                        'message':'Invalid email or password. Try again.'
-                    }
-                    return make_response(jsonify(response)), 401
+            else:
+                response = {
+                    'message':'Invalid email or password. Try again.'
+                }
+                return make_response(jsonify(response)), 401
             
         except Exception as e:
             response = {
