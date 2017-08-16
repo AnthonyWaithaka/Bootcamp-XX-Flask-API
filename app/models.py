@@ -3,6 +3,8 @@
 """
 from app import db
 from flask_bcrypt import Bcrypt
+import jwt
+from datetime import datetime, timedelta
 
 class User(db.Model):
     """User table class
@@ -14,7 +16,7 @@ class User(db.Model):
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255))
     bucketlists = db.relationship(
-        'Bucketlist', order_by='Bucketlist.id', cascade="all, delete-orphan")
+        'Bucketlist')
 
     def __init__(self, name, email, password):
         """Initialize new user account
@@ -33,16 +35,48 @@ class User(db.Model):
         """
         db.session.add(self)
         db.session.commit()
+    def generate_token(self, user_id):
+        """Generate access token
+        """
+        try:
+            #payload setup with expiration time
+            payload = {
+                'exp': datetime.utcnow() + timedelta(minutes=5),
+                'iat': datetime.utcnow(),
+                'sub': user_id
+            }
+            #create byte string token using the payload and SECRET key
+            jwt_string = jwt.encode(
+                payload,
+                current_app.config.get('SECRET'),
+                algorithm='HS256')
+            return jwt_string
+        except Exception as e:
+            return str(e)
+
+    @staticmethod
+    def decode_token(token):
+        """Decode access token from Authorization header
+        """
+        try:
+            payload = jwt.decode(token, current_app.config.get('SECRET'))
+            return payload['sub']
+        except jwt.ExpiredSignatureError:
+            return "Expired token. Login again"
+        except jwt.InvalidTokenError:
+            return "Invalid token. Register or Login"
 
 class Bucketlist(db.Model):
     """Bucketlist table class
     """
-    __tablename__ = "bucketlists"
+    __tablename__ = "bucketlist"
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     bucketlist_name = db.Column(db.String(255))
     deadline_date = db.Column(db.String(255))
     bucketlist_description = db.Column(db.String(255))
+    activities = db.relationship('Activity')
 
     def __init__(self, name, date, description):
         """Initialize bucketlist with name, deadline date and description
@@ -50,8 +84,6 @@ class Bucketlist(db.Model):
         self.bucketlist_name = name
         self.deadline_date = date
         self.bucketlist_description = description
-        activities = db.relationship(
-            'Activity', order_by='Activity.id', cascade="all, delete-orphan")
 
     def save(self):
         """Store new bucketlist into database
@@ -79,11 +111,12 @@ class Bucketlist(db.Model):
 class Activity(db.Model):
     """Activity table class
     """
-    __tablename__ = "activities"
+    __tablename__ = "activity"
 
     id = db.Column(db.Integer, primary_key=True)
     activity_name = db.Column(db.String(255))
     activity_description = db.Column(db.String(255))
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id'))
 
     def __init__(self, name, description):
         """Initialize activity with bucketlist_id, name and description
