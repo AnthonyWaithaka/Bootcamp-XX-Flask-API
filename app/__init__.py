@@ -23,41 +23,6 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    @app.route('/auth/register', methods=['POST', 'GET'])
-    def register():
-        """Register a new user account
-        """
-        if request.method == "POST":
-            name = str(request.data.get('name', ''))
-            email = str(request.data.get('email', ''))
-            password = str(request.data.get('password', ''))
-            if name:
-                user = User(name, email, password)
-                user.save()
-                response = jsonify({
-                    'id':user.id,
-                    'name':user.username,
-                    'email':user.email,
-                    'password':user.password
-                })
-                response.status_code = 201
-                return response
-        else:
-            users = User.get_all()
-            results = []
-
-            for user in users:
-                obj = {
-                    'id':user.id,
-                    'name':user.username,
-                    'email':user.email,
-                    'password':user.password
-                }
-                results.append(obj)
-            response = jsonify(results)
-            response.status_code = 200
-            return response
-
     @app.route('/bucketlists/', methods=['POST', 'GET'])
     def bucketlists():
         """Create a new bucketlist entry
@@ -205,4 +170,6 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
+    from .auth import auth_blueprint
+    app.register_blueprint(auth_blueprint)
     return app
