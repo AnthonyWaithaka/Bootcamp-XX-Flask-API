@@ -61,7 +61,7 @@ class AuthTestCase(unittest.TestCase):
         result_json = json.loads(result.data.decode())
         self.assertEqual(result.status_code, 401)
         self.assertEqual(
-            result_json['message'], "Invalid email or password. Try again")
+            result_json['message'], "Invalid email or password. Try again.")
 
     def tearDown(self):
             """Tear down initialized variables
