@@ -48,7 +48,7 @@ class LoginView(MethodView):
                 if access_token:
                     response = {
                         'message':'Logged in successfully.',
-                        'access_token':access_token
+                        'access_token':access_token.decode()
                     }
                     return make_response(jsonify(response)), 200
                 else:
