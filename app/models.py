@@ -16,8 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(255), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255))
-    bucketlists = db.relationship(
-        'Bucketlist')
+    bucketlists = db.relationship('Bucketlist')
 
     def __init__(self, name, email, password):
         """Initialize new user account
