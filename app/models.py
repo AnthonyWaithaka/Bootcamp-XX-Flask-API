@@ -16,7 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(255), nullable=False, unique=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255))
-    bucketlists = db.relationship('Bucketlist')
+    bucketlists = db.relationship('Bucketlist', order_by='Bucketlist.id', cascade="all, delete-orphan")
 
     def __init__(self, name, email, password):
         """Initialize new user account
@@ -76,7 +76,7 @@ class Bucketlist(db.Model):
     bucketlist_name = db.Column(db.String(255))
     deadline_date = db.Column(db.String(255))
     bucketlist_description = db.Column(db.String(255))
-    activities = db.relationship('Activity')
+    activities = db.relationship('Activity', order_by='Activity.id', cascade="all, delete-orphan")
 
     def __init__(self, created_by, name, date, description):
         """Initialize bucketlist with name, deadline date and description
