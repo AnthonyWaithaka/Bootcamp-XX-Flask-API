@@ -149,7 +149,7 @@ def create_app(config_name):
                         return response
                 else:
                     #Return all activities
-                    activities = Activity.get_all()
+                    activities = Activity.query.filter_by(bucketlist_id=bucketlist_id)
                     results = []
 
                     for activity in activities:
