@@ -78,12 +78,13 @@ class Bucketlist(db.Model):
     bucketlist_description = db.Column(db.String(255))
     activities = db.relationship('Activity')
 
-    def __init__(self, name, date, description):
+    def __init__(self, created_by, name, date, description):
         """Initialize bucketlist with name, deadline date and description
         """
         self.bucketlist_name = name
         self.deadline_date = date
         self.bucketlist_description = description
+        self.user_id = created_by
 
     def save(self):
         """Store new bucketlist into database
@@ -118,11 +119,12 @@ class Activity(db.Model):
     activity_description = db.Column(db.String(255))
     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id'))
 
-    def __init__(self, name, description):
+    def __init__(self, created_by, name, description):
         """Initialize activity with bucketlist_id, name and description
         """
         self.activity_name = name
         self.activity_description = description
+        self.bucketlist_id = created_by
 
     def save(self):
         """Store new activity into database
