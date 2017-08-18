@@ -61,8 +61,8 @@ class ActivityTestCase(unittest.TestCase):
         access_token = json.loads(result.data.decode())['access_token']
         self.create_bucketlist(access_token)
         result = self.client().post('/bucketlists/1/items',
-                                headers=dict(Authorization="Bearer " + access_token),
-                                data=self.activity1)
+                                    headers=dict(Authorization="Bearer " + access_token),
+                                    data=self.activity1)
         self.assertEqual(result.status_code, 201)
         self.assertIn('activity1', str(result.data))
 
@@ -74,16 +74,17 @@ class ActivityTestCase(unittest.TestCase):
         access_token = json.loads(result.data.decode())['access_token']
         self.create_bucketlist(access_token)
         result1 = self.client().post('/bucketlists/1/items',
-                                headers=dict(Authorization="Bearer " + access_token),
-                                data=self.activity1)
+                                     headers=dict(Authorization="Bearer " + access_token),
+                                     data=self.activity1)
         result2 = self.client().post('/bucketlists/1/items',
-                                headers=dict(Authorization="Bearer " + access_token),
-                                data=self.activity2)
+                                     headers=dict(Authorization="Bearer " + access_token),
+                                     data=self.activity2)
         self.assertEqual(result1.status_code, 201)
         self.assertEqual(result2.status_code, 201)
-        result = self.client().get('/bucketlists/1/items')
+        result = self.client().get('/bucketlists/1/items',
+                                   headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(result.status_code, 200)
-        self.assertIn('Do stuff', str(result2.data))
+        self.assertIn('Do stuff', str(result1.data))
         self.assertIn('Do a little more stuff', str(result2.data))
 
     def test_activity_editing(self):
@@ -94,11 +95,11 @@ class ActivityTestCase(unittest.TestCase):
         access_token = json.loads(result.data.decode())['access_token']
         self.create_bucketlist(access_token)
         result1 = self.client().post('/bucketlists/1/items',
-                                headers=dict(Authorization="Bearer " + access_token),
-                                data=self.activity1)
+                                     headers=dict(Authorization="Bearer " + access_token),
+                                     data=self.activity1)
         result2 = self.client().post('/bucketlists/1/items',
-                                headers=dict(Authorization="Bearer " + access_token),
-                                data=self.activity1)
+                                     headers=dict(Authorization="Bearer " + access_token),
+                                     data=self.activity2)
         self.assertEqual(result1.status_code, 201)
         self.assertEqual(result2.status_code, 201)
         result = self.client().put(
@@ -106,7 +107,9 @@ class ActivityTestCase(unittest.TestCase):
             headers=dict(Authorization="Bearer " + access_token),
             data={'bucketlist_id':1, 'name':'activitynew', 'description':'New thing'})
         self.assertEqual(result.status_code, 200)
-        new_result = self.client().get('/bucketlists/1/items')
+        new_result = self.client().get(
+            '/bucketlists/1/items',
+            headers=dict(Authorization="Bearer " + access_token))
         self.assertIn('New thing', str(new_result.data))
 
     def test_activity_deleting(self):
@@ -117,17 +120,21 @@ class ActivityTestCase(unittest.TestCase):
         access_token = json.loads(result.data.decode())['access_token']
         self.create_bucketlist(access_token)
         result1 = self.client().post('/bucketlists/1/items',
-                                headers=dict(Authorization="Bearer " + access_token),
-                                data=self.activity1)
+                                     headers=dict(Authorization="Bearer " + access_token),
+                                     data=self.activity1)
         result2 = self.client().post('/bucketlists/1/items',
-                                headers=dict(Authorization="Bearer " + access_token),
-                                data=self.activity1)
+                                     headers=dict(Authorization="Bearer " + access_token),
+                                     data=self.activity1)
         self.assertEqual(result1.status_code, 201)
         self.assertEqual(result2.status_code, 201)
-        delete_result = self.client().delete('/bucketlists/1/items/1')
+        delete_result = self.client().delete(
+            '/bucketlists/1/items/1',
+            headers=dict(Authorization="Bearer " + access_token),)
         self.assertEqual(delete_result.status_code, 200)
         #Test for data, should return a 404
-        new_result = self.client().get('/bucketlists/1/items/1')
+        new_result = self.client().get(
+            '/bucketlists/1/items/1',
+            headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(new_result.status_code, 404)
 
     def tearDown(self):
