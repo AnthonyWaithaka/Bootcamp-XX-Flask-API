@@ -120,8 +120,8 @@ class BucketlistTestCase(unittest.TestCase):
         result = self.client().post(
             '/bucketlists/',
             headers=dict(Authorization="Bearer " + access_token),
-            data = {'name':'list1', 'date':'01012018',
-                    'description':'Some new description'})
+            data={'name':'list1', 'date':'01012018',
+                  'description':'Some new description'})
         self.assertEqual(result.status_code, 201)
         result_json = json.loads(result.data.decode())
         delete_result = self.client().delete(
