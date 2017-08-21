@@ -50,6 +50,16 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(login_result_json['message'], "Logged in successfully.")
         self.assertEqual(login_result.status_code, 200)
 
+    def test_user_logout(self):
+        """Test user can log out
+        """
+        result = self.client().post('/auth/register', data=self.user_data)
+        self.assertEqual(result.status_code, 201)
+        login_result = self.client().post('/auth/login', data=self.user_data)
+        self.assertEqual(login_result.status_code, 200)
+        logout_result = self.client().get('/auth/logout')
+        self.assertEqual(logout_result.status_code, 200)
+
     def test_non_registered_user_login(self):
         """Test user without account cannot log in
         """
@@ -64,9 +74,9 @@ class AuthTestCase(unittest.TestCase):
             result_json['message'], "Invalid email or password. Try again.")
 
     def tearDown(self):
-            """Tear down initialized variables
-            """
-            with self.app.app_context():
-                # drop all tables
-                db.session.remove()
-                db.drop_all()
+        """Tear down initialized variables
+        """
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
