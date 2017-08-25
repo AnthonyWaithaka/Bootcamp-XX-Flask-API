@@ -1,7 +1,7 @@
 # /app/models.py
 """Application models for database population
 """
-from app import db
+from app.app import db
 from flask_bcrypt import Bcrypt
 from flask import current_app
 import jwt

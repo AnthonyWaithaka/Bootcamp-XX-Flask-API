@@ -2,7 +2,7 @@
 
 import unittest
 import json
-from app import create_app, db
+from app.app import create_app, db
 
 class AuthTestCase(unittest.TestCase):
     """Several test cases for authentication blueprint

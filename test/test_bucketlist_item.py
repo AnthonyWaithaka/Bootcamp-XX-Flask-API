@@ -3,7 +3,7 @@
 """
 import unittest
 import json
-from app import create_app, db
+from app.app import create_app, db
 
 class BucketlistItemTestCase(unittest.TestCase):
     """Test cases for bucketlist items
