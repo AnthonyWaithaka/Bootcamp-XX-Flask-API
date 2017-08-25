@@ -57,8 +57,12 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 201)
         login_result = self.client().post('/auth/login', data=self.user_data)
         self.assertEqual(login_result.status_code, 200)
-        logout_result = self.client().get('/auth/logout')
+        access_token = json.loads(login_result.data.decode())['access_token']
+
+        logout_result = self.client().post('/auth/logout',
+                                          headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(logout_result.status_code, 200)
+        self.assertIn(json.loads(logout_result.data.decode())['message'], "Logged out successfully.")
 
     def test_non_registered_user_login(self):
         """Test user without account cannot log in
@@ -72,6 +76,23 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 401)
         self.assertEqual(
             result_json['message'], "Invalid email or password. Try again.")
+
+    def test_user_reset_password(self):
+        """Test user can reset their password
+        """
+        result = self.client().post('/auth/register', data=self.user_data)
+        self.assertEqual(result.status_code, 201)
+        reset_result = self.client().post('/auth/reset-password', data={
+            'email':'guy@yes.com',
+            'old_password':'test_password',
+            'new_password':'newstuff'
+        })
+        self.assertEqual(reset_result.status_code, 200)
+        login_result = self.client().post('/auth/login', data={
+            'email':'guy@yes.com',
+            'password':'newstuff'
+        })
+        self.assertEqual(login_result.status_code, 200, msg="New password not accepted.")
 
     def tearDown(self):
         """Tear down initialized variables
