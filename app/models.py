@@ -55,6 +55,18 @@ class User(db.Model):
             return str(e)
 
     @staticmethod
+    def reset_password(user, new_password):
+        """Reset a specific user's password
+        """
+        user = User.query.filter_by(email=user).first()
+        if user:
+            user.password = Bcrypt().generate_password_hash(new_password).decode()
+            user.save()
+            return True
+        else:
+            return False
+
+    @staticmethod
     def decode_token(token):
         """Decode access token from Authorization header
         """
@@ -65,6 +77,23 @@ class User(db.Model):
             return "Expired token. Login again"
         except jwt.InvalidTokenError:
             return "Invalid token. Register or Login"
+
+class Blacklist(db.Model):
+    """Used tokens
+    """
+    __tablename__ = "blacklist"
+
+    id = db.Column(db.Integer, primary_key=True)
+    used_token = db.Column(db.String(255))
+
+    def __init__(self, token):
+        """Store token variable
+        """
+        self.used_token = token
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
 class Bucketlist(db.Model):
     """Bucketlist table class
