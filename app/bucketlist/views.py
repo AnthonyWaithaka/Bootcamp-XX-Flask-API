@@ -6,8 +6,8 @@
 from . import bucketlist_blueprint
 
 from flask.views import MethodView
-from flask import make_response, request, jsonify, abort
-from app.models import Bucketlist, User
+from flask import make_response, request, jsonify, abort, session
+from app.models import Bucketlist, User, Blacklist
 
 class BucketListsView(MethodView):
     """Request handling for the bucketlists
@@ -21,6 +21,11 @@ class BucketListsView(MethodView):
         access_token = auth_header.split(" ")[1]
 
         if access_token:
+            blacklisted = Blacklist.query.filter_by(used_token=access_token).first()
+            if blacklisted:
+                response = {'message':'Please log in to access bucketlists.'}
+                return make_response(jsonify(response)), 401
+
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
                 # user has been authenticated
@@ -36,6 +41,10 @@ class BucketListsView(MethodView):
                         'description':bucketlist.bucketlist_description
                     }
                     results.append(obj)
+
+                if results == []:
+                    return make_response({'message':'No bucketlists to view'}), 200
+
                 response = jsonify(results)
                 response.status_code = 200
                 return response
@@ -50,6 +59,10 @@ class BucketListsView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlists.'}
+            return make_response(jsonify(response)), 401
 
         if access_token:
             user_id = User.decode_token(access_token)
@@ -76,12 +89,12 @@ class BucketListsManipulationView(MethodView):
     that belong to the user
     """
     def delete(self, list_id):
-        """DELETE request handling for /bucketlists/<int:list_id>
-        Delete the user's bucketlist
-        """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlists.'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
@@ -104,7 +117,10 @@ class BucketListsManipulationView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlists.'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
@@ -140,7 +156,10 @@ class BucketListsManipulationView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlists.'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):

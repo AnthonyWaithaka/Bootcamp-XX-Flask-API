@@ -24,7 +24,7 @@ class RegistrationView(MethodView):
                 user.save()
 
                 response = {
-                    'message': 'User registered successfully. Please Log in.'
+                    'message': 'User %s %s registered successfully. Please Log in.' %(username, email)
                 }
                 return make_response(jsonify(response)), 201
             except Exception as e:
@@ -84,6 +84,9 @@ class LogoutView(MethodView):
                         'message':'Logged out successfully.'
                     }
                     return make_response(jsonify(response)), 200
+                else:
+                    response = {'message':'Token not valid. Please log in again.'}
+                    return make_response(jsonify(response)), 401
         except Exception as e:
             response = {'message':str(e)}
             return make_response(jsonify(response)), 500

@@ -16,7 +16,7 @@ def create_app(config_name):
     """Create new Flask object and
     connect to database
     """
-    from app.models import User, Bucketlist, Activity
+    from app.models import User, Bucketlist, BucketlistItem
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
@@ -25,8 +25,8 @@ def create_app(config_name):
 
     from .auth import auth_blueprint
     from .bucketlist import bucketlist_blueprint
-    from .activity import activity_blueprint
+    from .bucketlist_item import bucketlist_item_blueprint
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(bucketlist_blueprint)
-    app.register_blueprint(activity_blueprint)
+    app.register_blueprint(bucketlist_item_blueprint)
     return app

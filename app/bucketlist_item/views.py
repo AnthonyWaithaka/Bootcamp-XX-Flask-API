@@ -1,13 +1,13 @@
-# /app/activity/views.py
+# /app/bucketlist_item/views.py
 
 """Views methods for managing bucketlist item endpoints
 """
 
-from . import activity_blueprint
+from . import bucketlist_item_blueprint
 
 from flask.views import MethodView
 from flask import make_response, request, jsonify, abort
-from app.models import Bucketlist, User, Activity
+from app.models import Bucketlist, User, BucketlistItem, Blacklist
 
 class ActivitiesView(MethodView):
     """Request handling for bucketlist items
@@ -18,20 +18,23 @@ class ActivitiesView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlist items.'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
                 # user has been authenticated
-                activities = Activity.query.filter_by(bucketlist_id=list_id)
+                activities = BucketlistItem.query.filter_by(bucketlist_id=list_id)
                 results = []
 
-                for activity in activities:
+                for bucketlist_item in activities:
                     obj = {
-                        'id':activity.id,
-                        'bucketlist_id':activity.bucketlist_id,
-                        'name':activity.activity_name,
-                        'description':activity.activity_description
+                        'id':bucketlist_item.id,
+                        'bucketlist_id':bucketlist_item.bucketlist_id,
+                        'name':bucketlist_item.bucketlist_item_name,
+                        'description':bucketlist_item.bucketlist_item_description
                     }
                     results.append(obj)
                 response = jsonify(results)
@@ -48,7 +51,10 @@ class ActivitiesView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlist items.'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
@@ -56,13 +62,13 @@ class ActivitiesView(MethodView):
                 name = str(request.data.get('name', ''))
                 description = str(request.data.get('description', ''))
                 if name:
-                    activity = Activity(list_id, name, description)
-                    activity.save()
+                    bucketlist_item = BucketlistItem(list_id, name, description)
+                    bucketlist_item.save()
                     response = jsonify({
-                        'id':activity.id,
-                        'bucketlist_id':activity.bucketlist_id,
-                        'name':activity.activity_name,
-                        'description':activity.activity_description
+                        'id':bucketlist_item.id,
+                        'bucketlist_id':bucketlist_item.bucketlist_id,
+                        'name':bucketlist_item.bucketlist_item_name,
+                        'description':bucketlist_item.bucketlist_item_description
                     })
                     response.status_code = 201
                     return response
@@ -80,18 +86,21 @@ class ActivitiesManipulationView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlist items'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
                 # user has been authenticated
-                activity = Activity.query.filter_by(id=item_id).first()
-                if not activity:
+                bucketlist_item = BucketlistItem.query.filter_by(id=item_id).first()
+                if not bucketlist_item:
                     abort(404)
                 else:
-                    activity.delete()
+                    bucketlist_item.delete()
                     return {
-                        "message":"activity {} deleted successfully".format(activity.id)}, 200
+                        "message":"bucketlist_item {} deleted successfully".format(bucketlist_item.id)}, 200
             else:
                 message = user_id
                 response = {'message':message}
@@ -103,25 +112,28 @@ class ActivitiesManipulationView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlist items.'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
                 # user has been authenticated
-                activity = Activity.query.filter_by(id=item_id).first()
-                if not activity:
+                bucketlist_item = BucketlistItem.query.filter_by(id=item_id).first()
+                if not bucketlist_item:
                     abort(404)
                 else:
                     name = str(request.data.get('name', ''))
                     description = str(request.data.get('description', ''))
-                    activity.activity_name = name
-                    activity.activity_description = description
-                    activity.save()
+                    bucketlist_item.bucketlist_item_name = name
+                    bucketlist_item.bucketlist_item_description = description
+                    bucketlist_item.save()
                     response = jsonify({
-                        'id': activity.id,
-                        'bucketlist_id': activity.bucketlist_id,
-                        'name': activity.activity_name,
-                        'description': activity.activity_description
+                        'id': bucketlist_item.id,
+                        'bucketlist_id': bucketlist_item.bucketlist_id,
+                        'name': bucketlist_item.bucketlist_item_name,
+                        'description': bucketlist_item.bucketlist_item_description
                     })
                     response.status_code = 200
                     return response
@@ -136,20 +148,23 @@ class ActivitiesManipulationView(MethodView):
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
-
+        blacklist = Blacklist.query.filter_by(used_token=access_token).first()
+        if blacklist:
+            response = {'message':'Please log in to access bucketlist items.'}
+            return make_response(jsonify(response)), 401
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
                 # user has been authenticated
-                activity = Activity.query.filter_by(id=item_id).first()
-                if not activity:
+                bucketlist_item = BucketlistItem.query.filter_by(id=item_id).first()
+                if not bucketlist_item:
                     abort(404)
                 else:
                     response = jsonify({
-                        'id': activity.id,
-                        'bucketlist_id': activity.bucketlist_id,
-                        'name': activity.activity_name,
-                        'description': activity.activity_description
+                        'id': bucketlist_item.id,
+                        'bucketlist_id': bucketlist_item.bucketlist_id,
+                        'name': bucketlist_item.bucketlist_item_name,
+                        'description': bucketlist_item.bucketlist_item_description
                     })
                     response.status_code = 200
                     return response
@@ -162,12 +177,12 @@ activities_view = ActivitiesView.as_view('activities_view')
 activitiesmanip_view = ActivitiesManipulationView.as_view('activitiesmanip_view')
 
 # rules for the bucketlist routes
-activity_blueprint.add_url_rule(
+bucketlist_item_blueprint.add_url_rule(
     '/bucketlists/<int:list_id>/items',
     view_func=activities_view,
     methods=['GET', 'POST'])
 
-activity_blueprint.add_url_rule(
+bucketlist_item_blueprint.add_url_rule(
     '/bucketlists/<int:list_id>/items/<int:item_id>',
     view_func=activitiesmanip_view,
     methods=['DELETE', 'PUT', 'GET'])

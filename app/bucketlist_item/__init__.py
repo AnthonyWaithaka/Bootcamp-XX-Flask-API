@@ -2,6 +2,6 @@
 
 from flask import Blueprint
 
-activity_blueprint = Blueprint('activity', __name__)
+bucketlist_item_blueprint = Blueprint('bucketlist_item', __name__)
 
 from . import views

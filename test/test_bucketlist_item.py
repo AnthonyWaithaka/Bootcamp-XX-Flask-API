@@ -1,11 +1,11 @@
-# /test_activity.py
+# /test_bucketlist_item.py
 """Tests for bucketlist items
 """
 import unittest
 import json
 from app import create_app, db
 
-class ActivityTestCase(unittest.TestCase):
+class BucketlistItemTestCase(unittest.TestCase):
     """Test cases for bucketlist items
     """
     def setUp(self):
@@ -14,8 +14,8 @@ class ActivityTestCase(unittest.TestCase):
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client
         self.bucketlist = {'name':'list1', 'date':'01011999', 'description':'Some description'}
-        self.activity1 = {'name':'activity1', 'description':'Do stuff'}
-        self.activity2 = {'name':'activity2', 'description':'Do a little more stuff'}
+        self.bucketlist_item1 = {'name':'bucketlist_item1', 'description':'Do stuff'}
+        self.bucketlist_item2 = {'name':'bucketlist_item2', 'description':'Do a little more stuff'}
 
         # bind the app to the current context
         with self.app.app_context():
@@ -25,7 +25,7 @@ class ActivityTestCase(unittest.TestCase):
             db.create_all()
 
     def register_user(self, name="guy2", email="guy2@yes.com", password="bbb"):
-        """Register a new user for the activity tests
+        """Register a new user for the bucketlist_item tests
         """
         user_data = {
             'name': name,
@@ -53,8 +53,8 @@ class ActivityTestCase(unittest.TestCase):
         self.assertIn('list1', str(result.data), msg="Bucketlist not created")
 
 
-    def test_activity_creation(self):
-        """Test API can create an activity (POST)
+    def test_bucketlist_item_creation(self):
+        """Test API can create an bucketlist_item (POST)
         """
         self.register_user()
         result = self.login_user()
@@ -62,9 +62,9 @@ class ActivityTestCase(unittest.TestCase):
         self.create_bucketlist(access_token)
         result = self.client().post('/bucketlists/1/items',
                                     headers=dict(Authorization="Bearer " + access_token),
-                                    data=self.activity1)
+                                    data=self.bucketlist_item1)
         self.assertEqual(result.status_code, 201)
-        self.assertIn('activity1', str(result.data))
+        self.assertIn('bucketlist_item1', str(result.data))
 
     def test_api_return_all_activities(self):
         """Test that the API can return all activities (GET)
@@ -75,10 +75,10 @@ class ActivityTestCase(unittest.TestCase):
         self.create_bucketlist(access_token)
         result1 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
-                                     data=self.activity1)
+                                     data=self.bucketlist_item1)
         result2 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
-                                     data=self.activity2)
+                                     data=self.bucketlist_item2)
         self.assertEqual(result1.status_code, 201)
         self.assertEqual(result2.status_code, 201)
         result = self.client().get('/bucketlists/1/items',
@@ -87,8 +87,8 @@ class ActivityTestCase(unittest.TestCase):
         self.assertIn('Do stuff', str(result1.data))
         self.assertIn('Do a little more stuff', str(result2.data))
 
-    def test_activity_editing(self):
-        """Test API can edit an activity (PUT)
+    def test_bucketlist_item_editing(self):
+        """Test API can edit an bucketlist_item (PUT)
         """
         self.register_user()
         result = self.login_user()
@@ -96,24 +96,24 @@ class ActivityTestCase(unittest.TestCase):
         self.create_bucketlist(access_token)
         result1 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
-                                     data=self.activity1)
+                                     data=self.bucketlist_item1)
         result2 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
-                                     data=self.activity2)
+                                     data=self.bucketlist_item2)
         self.assertEqual(result1.status_code, 201)
         self.assertEqual(result2.status_code, 201)
         result = self.client().put(
             '/bucketlists/1/items/1',
             headers=dict(Authorization="Bearer " + access_token),
-            data={'bucketlist_id':1, 'name':'activitynew', 'description':'New thing'})
+            data={'bucketlist_id':1, 'name':'bucketlist_itemnew', 'description':'New thing'})
         self.assertEqual(result.status_code, 200)
         new_result = self.client().get(
             '/bucketlists/1/items',
             headers=dict(Authorization="Bearer " + access_token))
         self.assertIn('New thing', str(new_result.data))
 
-    def test_activity_deleting(self):
-        """Test API can delete an activity (DELETE)
+    def test_bucketlist_item_deleting(self):
+        """Test API can delete an bucketlist_item (DELETE)
         """
         self.register_user()
         result = self.login_user()
@@ -121,10 +121,10 @@ class ActivityTestCase(unittest.TestCase):
         self.create_bucketlist(access_token)
         result1 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
-                                     data=self.activity1)
+                                     data=self.bucketlist_item1)
         result2 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
-                                     data=self.activity1)
+                                     data=self.bucketlist_item1)
         self.assertEqual(result1.status_code, 201)
         self.assertEqual(result2.status_code, 201)
         delete_result = self.client().delete(
