@@ -28,7 +28,8 @@ class AuthTestCase(unittest.TestCase):
         result = self.client().post('/auth/register', data=self.user_data)
         self.assertEqual(result.status_code, 201)
         result_json = json.loads(result.data.decode())
-        self.assertEqual(result_json['message'], "User registered successfully. Please Log in.")
+        self.assertEqual(result_json['message'], "User %s %s registered successfully. Please Log in."
+        %('guy', 'guy@yes.com'))
 
     def test_already_registered_user(self):
         """Test that a user cannot be registered twice
