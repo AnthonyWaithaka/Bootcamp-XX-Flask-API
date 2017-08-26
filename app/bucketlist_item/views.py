@@ -43,7 +43,7 @@ class ActivitiesView(MethodView):
             else:
                 message = user_id
                 response = {'message': message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
     def post(self, list_id):
         """POST request handling for /bucketlists/<int:list_id>/items
@@ -75,7 +75,7 @@ class ActivitiesView(MethodView):
             else:
                 message = user_id
                 response = {'message': message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
 class ActivitiesManipulationView(MethodView):
     """Request handling for manipulating bucketlist items
@@ -104,7 +104,7 @@ class ActivitiesManipulationView(MethodView):
             else:
                 message = user_id
                 response = {'message':message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
     def put(self, list_id, item_id):
         """PUT request handling for /bucketlists/<int:list_id>/items/<int:item_id>
@@ -140,7 +140,7 @@ class ActivitiesManipulationView(MethodView):
             else:
                 message = user_id
                 response = {'message':message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
     def get(self, list_id, item_id):
         """GET request handling for /bucketlists/<int:list_id>/items/<int:item_id>
@@ -171,7 +171,7 @@ class ActivitiesManipulationView(MethodView):
             else:
                 message = user_id
                 response = {'message':message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
 activities_view = ActivitiesView.as_view('activities_view')
 activitiesmanip_view = ActivitiesManipulationView.as_view('activitiesmanip_view')

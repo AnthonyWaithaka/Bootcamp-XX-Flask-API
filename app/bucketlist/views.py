@@ -43,7 +43,7 @@ class BucketListsView(MethodView):
                     results.append(obj)
 
                 if results == []:
-                    return make_response({'message':'No bucketlists to view'}), 200
+                    return make_response({'message':'No bucketlists to view'}), 204
 
                 response = jsonify(results)
                 response.status_code = 200
@@ -51,7 +51,7 @@ class BucketListsView(MethodView):
             else:
                 message = user_id
                 response = {'message': message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
     def post(self):
         """POST request handling for /bucketlists/
@@ -109,7 +109,7 @@ class BucketListsManipulationView(MethodView):
             else:
                 message = user_id
                 response = {'message':message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
     def put(self, list_id):
         """PUT request handling for /bucketlists/<int:list_id>
@@ -148,7 +148,7 @@ class BucketListsManipulationView(MethodView):
             else:
                 message = user_id
                 response = {'message':message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
     def get(self, list_id):
         """GET request handling for /bucketlists/<int:list_id>
@@ -180,7 +180,7 @@ class BucketListsManipulationView(MethodView):
             else:
                 message = user_id
                 response = {'message':message}
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
 
 bucketlists_view = BucketListsView.as_view('bucketlists_view')
 bucketlistsmanip_view = BucketListsManipulationView.as_view('bucketlistsmanip_view')
