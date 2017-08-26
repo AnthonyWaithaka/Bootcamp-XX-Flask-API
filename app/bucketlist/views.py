@@ -3,7 +3,9 @@
 """Views methods for managing bucketlist endpoints
 """
 
-from . import bucketlist_blueprint
+from flask import Blueprint
+
+bucketlist_blueprint = Blueprint('bucketlist', __name__)
 
 from flask.views import MethodView
 from flask import make_response, request, jsonify, abort
