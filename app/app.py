@@ -11,6 +11,7 @@ from instance.config import app_config
 
 #initializing sql-alchemy
 db = SQLAlchemy()
+user_id = None
 
 def create_app(config_name):
     """Create new Flask object and
