@@ -6,7 +6,7 @@
 from . import bucketlist_blueprint
 
 from flask.views import MethodView
-from flask import make_response, request, jsonify, abort, session
+from flask import make_response, request, jsonify, abort
 from app.models import Bucketlist, User, Blacklist
 
 class BucketListsView(MethodView):
