@@ -23,7 +23,7 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    from .auth import auth_blueprint
+    from .auth.views import auth_blueprint
     from .bucketlist import bucketlist_blueprint
     from .bucketlist_item import bucketlist_item_blueprint
     app.register_blueprint(auth_blueprint)
