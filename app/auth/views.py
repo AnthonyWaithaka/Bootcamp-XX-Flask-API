@@ -1,6 +1,8 @@
 # /app/auth/views.py
 
-from . import auth_blueprint
+from flask import Blueprint
+
+auth_blueprint = Blueprint('auth', __name__)
 
 from flask.views import MethodView
 from flask import make_response, request, jsonify
