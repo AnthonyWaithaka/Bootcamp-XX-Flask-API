@@ -93,7 +93,7 @@ class AuthTestCase(unittest.TestCase):
             'email':'guy@yes.com',
             'password':'newstuff'
         })
-        self.assertEqual(login_result.status_code, 200, msg="New password not accepted.")
+        self.assertEqual(login_result.status_code, 200)
 
     def tearDown(self):
         """Tear down initialized variables

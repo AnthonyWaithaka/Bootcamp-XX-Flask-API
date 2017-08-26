@@ -49,8 +49,8 @@ class BucketlistItemTestCase(unittest.TestCase):
         result = self.client().post('/bucketlists/',
                                     headers=dict(Authorization="Bearer " + access_token),
                                     data=self.bucketlist)
-        self.assertEqual(result.status_code, 201, msg="Page not returned")
-        self.assertIn('list1', str(result.data), msg="Bucketlist not created")
+        self.assertEqual(result.status_code, 201)
+        self.assertIn('list1', str(result.data))
 
 
     def test_bucketlist_item_creation(self):

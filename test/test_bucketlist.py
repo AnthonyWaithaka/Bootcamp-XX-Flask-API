@@ -50,8 +50,8 @@ class BucketlistTestCase(unittest.TestCase):
         result = self.client().post('/bucketlists/',
                                     headers=dict(Authorization="Bearer " + access_token),
                                     data=self.bucketlist)
-        self.assertEqual(result.status_code, 201, msg="Page not returned")
-        self.assertIn('list1', str(result.data), msg="Bucketlist not created")
+        self.assertEqual(result.status_code, 201)
+        self.assertIn('list1', str(result.data))
 
     def test_api_return_all_bucketlists(self):
         """Test that the API can return all bucketlists (GET)
@@ -65,8 +65,8 @@ class BucketlistTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 201)
         result = self.client().get('/bucketlists/',
                                    headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(result.status_code, 200, msg="Page not returned")
-        self.assertIn('Some description', str(result.data), msg="Bucketlist not returned")
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Some description', str(result.data))
 
     def test_api_return_bucketlist_by_id(self):
         """Test that the API can return a bucketlist by its id (GET)
@@ -83,8 +83,8 @@ class BucketlistTestCase(unittest.TestCase):
         new_result = self.client().get(
             '/bucketlists/{}'.format(result_in_json['id']),
             headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(new_result.status_code, 200, msg="Page not returned")
-        self.assertIn('Some description', str(result.data), msg="Bucketlist not returned")
+        self.assertEqual(new_result.status_code, 200)
+        self.assertIn('Some description', str(result.data))
 
     def test_bucketlist_editing(self):
         """Test API can edit a bucketlist (PUT)
@@ -105,11 +105,11 @@ class BucketlistTestCase(unittest.TestCase):
             data={
                 "name":"list3", "date":"01012018",
                 "description":"Some other description"})
-        self.assertEqual(result.status_code, 200, msg="Page not returned")
+        self.assertEqual(result.status_code, 200)
         new_result = self.client().get(
             '/bucketlists/{}'.format(result_json['id']),
             headers=dict(Authorization="Bearer " + access_token))
-        self.assertIn('other', str(new_result.data), msg="Bucketlist not updated")
+        self.assertIn('other', str(new_result.data))
 
     def test_bucketlist_deleting(self):
         """Test API can delete a bucketlist (DELETE)
@@ -132,7 +132,7 @@ class BucketlistTestCase(unittest.TestCase):
         new_result = self.client().get(
             '/bucketlists/1',
             headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(new_result.status_code, 404, msg="Bucketlist not deleted")
+        self.assertEqual(new_result.status_code, 404)
 
     def tearDown(self):
         """Tear down initialized variables
