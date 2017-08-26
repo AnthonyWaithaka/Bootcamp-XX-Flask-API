@@ -16,7 +16,6 @@ class BucketlistTestCase(BaseTest):
         result = self.client().post('/bucketlists/',
                                     headers=dict(Authorization="Bearer " + access_token),
                                     data=self.bucketlist)
-        self.assertEqual(result.status_code, 201)
         self.assertIn('list1', str(result.data))
 
     def test_api_return_all_bucketlists(self):
@@ -25,13 +24,9 @@ class BucketlistTestCase(BaseTest):
         self.register_user()
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
-        result = self.client().post('/bucketlists/',
-                                    headers=dict(Authorization="Bearer " + access_token),
-                                    data=self.bucketlist)
-        self.assertEqual(result.status_code, 201)
+        result = self.create_bucketlist(access_token)
         result = self.client().get('/bucketlists/',
                                    headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(result.status_code, 200)
         self.assertIn('Some description', str(result.data))
 
     def test_api_return_bucketlist_by_id(self):
@@ -40,16 +35,12 @@ class BucketlistTestCase(BaseTest):
         self.register_user()
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
-        result = self.client().post('/bucketlists/',
-                                    headers=dict(Authorization="Bearer " + access_token),
-                                    data=self.bucketlist)
-        self.assertEqual(result.status_code, 201)
+        result = self.create_bucketlist(access_token)
         result_in_json = json.loads(
             result.data.decode('utf-8').replace("'", "\""))
         new_result = self.client().get(
             '/bucketlists/{}'.format(result_in_json['id']),
             headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(new_result.status_code, 200)
         self.assertIn('Some description', str(result.data))
 
     def test_bucketlist_editing(self):
@@ -58,12 +49,7 @@ class BucketlistTestCase(BaseTest):
         self.register_user()
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
-        result = self.client().post(
-            '/bucketlists/',
-            headers=dict(Authorization="Bearer " + access_token),
-            data={'name':'list2', 'date':'01012018',
-                  'description':'Some other description'})
-        self.assertEqual(result.status_code, 201)
+        result = self.create_bucketlist(access_token)
         result_json = json.loads(result.data.decode())
         result = self.client().put(
             '/bucketlists/{}'.format(result_json['id']),
@@ -71,7 +57,6 @@ class BucketlistTestCase(BaseTest):
             data={
                 "name":"list3", "date":"01012018",
                 "description":"Some other description"})
-        self.assertEqual(result.status_code, 200)
         new_result = self.client().get(
             '/bucketlists/{}'.format(result_json['id']),
             headers=dict(Authorization="Bearer " + access_token))
@@ -83,20 +68,14 @@ class BucketlistTestCase(BaseTest):
         self.register_user()
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
-        result = self.client().post(
-            '/bucketlists/',
-            headers=dict(Authorization="Bearer " + access_token),
-            data={'name':'list1', 'date':'01012018',
-                  'description':'Some new description'})
-        self.assertEqual(result.status_code, 201)
+        result = self.create_bucketlist(access_token)
         result_json = json.loads(result.data.decode())
         delete_result = self.client().delete(
             '/bucketlists/{}'.format(result_json['id']),
             headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(delete_result.status_code, 200)
         #Test for data, should return a 404
         new_result = self.client().get(
-            '/bucketlists/1',
+            '/bucketlists/{}'.format(result_json['id']),
             headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(new_result.status_code, 404)
 

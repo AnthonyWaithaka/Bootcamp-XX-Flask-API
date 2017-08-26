@@ -17,7 +17,6 @@ class BucketlistItemTestCase(BaseTest):
         result = self.client().post('/bucketlists/1/items',
                                     headers=dict(Authorization="Bearer " + access_token),
                                     data=self.bucketlist_item1)
-        self.assertEqual(result.status_code, 201)
         self.assertIn('bucketlist_item1', str(result.data))
 
     def test_api_return_all_activities(self):
@@ -33,11 +32,8 @@ class BucketlistItemTestCase(BaseTest):
         result2 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
                                      data=self.bucketlist_item2)
-        self.assertEqual(result1.status_code, 201)
-        self.assertEqual(result2.status_code, 201)
         result = self.client().get('/bucketlists/1/items',
                                    headers=dict(Authorization="Bearer " + access_token))
-        self.assertEqual(result.status_code, 200)
         self.assertIn('Do stuff', str(result1.data))
         self.assertIn('Do a little more stuff', str(result2.data))
 
@@ -54,13 +50,10 @@ class BucketlistItemTestCase(BaseTest):
         result2 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
                                      data=self.bucketlist_item2)
-        self.assertEqual(result1.status_code, 201)
-        self.assertEqual(result2.status_code, 201)
         result = self.client().put(
             '/bucketlists/1/items/1',
             headers=dict(Authorization="Bearer " + access_token),
             data={'bucketlist_id':1, 'name':'bucketlist_itemnew', 'description':'New thing'})
-        self.assertEqual(result.status_code, 200)
         new_result = self.client().get(
             '/bucketlists/1/items',
             headers=dict(Authorization="Bearer " + access_token))
@@ -79,12 +72,9 @@ class BucketlistItemTestCase(BaseTest):
         result2 = self.client().post('/bucketlists/1/items',
                                      headers=dict(Authorization="Bearer " + access_token),
                                      data=self.bucketlist_item1)
-        self.assertEqual(result1.status_code, 201)
-        self.assertEqual(result2.status_code, 201)
         delete_result = self.client().delete(
             '/bucketlists/1/items/1',
             headers=dict(Authorization="Bearer " + access_token),)
-        self.assertEqual(delete_result.status_code, 200)
         #Test for data, should return a 404
         new_result = self.client().get(
             '/bucketlists/1/items/1',

@@ -47,11 +47,9 @@ class BaseTest(unittest.TestCase):
     def create_bucketlist(self, access_token):
         """Create a new bucketlist to test activities
         """
-        result = self.client().post('/bucketlists/',
+        return self.client().post('/bucketlists/',
                                     headers=dict(Authorization="Bearer " + access_token),
                                     data=self.bucketlist)
-        self.assertEqual(result.status_code, 201)
-        self.assertIn('list1', str(result.data))
 
     def tearDown(self):
         """Tear down initialized variables
