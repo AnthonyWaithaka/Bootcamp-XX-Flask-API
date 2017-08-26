@@ -24,8 +24,8 @@ def create_app(config_name):
     db.init_app(app)
 
     from .auth.views import auth_blueprint
-    from .bucketlist import bucketlist_blueprint
-    from .bucketlist_item import bucketlist_item_blueprint
+    from .bucketlist.views import bucketlist_blueprint
+    from .bucketlist_item.views import bucketlist_item_blueprint
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(bucketlist_blueprint)
     app.register_blueprint(bucketlist_item_blueprint)
