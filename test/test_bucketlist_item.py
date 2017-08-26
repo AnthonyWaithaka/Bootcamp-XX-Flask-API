@@ -1,58 +1,12 @@
 # /test_bucketlist_item.py
 """Tests for bucketlist items
 """
-import unittest
 import json
-from app.app import create_app, db
+from base import *
 
-class BucketlistItemTestCase(unittest.TestCase):
+class BucketlistItemTestCase(BaseTest):
     """Test cases for bucketlist items
     """
-    def setUp(self):
-        """Initializing the app and defining test variables
-        """
-        self.app = create_app(config_name="testing")
-        self.client = self.app.test_client
-        self.bucketlist = {'name':'list1', 'date':'01011999', 'description':'Some description'}
-        self.bucketlist_item1 = {'name':'bucketlist_item1', 'description':'Do stuff'}
-        self.bucketlist_item2 = {'name':'bucketlist_item2', 'description':'Do a little more stuff'}
-
-        # bind the app to the current context
-        with self.app.app_context():
-            # create all tables
-            db.session.close()
-            db.drop_all()
-            db.create_all()
-
-    def register_user(self, name="guy2", email="guy2@yes.com", password="bbb"):
-        """Register a new user for the bucketlist_item tests
-        """
-        user_data = {
-            'name': name,
-            'email': email,
-            'password': password
-        }
-        return self.client().post('/auth/register', data=user_data)
-
-    def login_user(self, email="guy2@yes.com", password="bbb"):
-        """Log in with the registered account
-        """
-        user_data = {
-            'email': email,
-            'password': password
-        }
-        return self.client().post('/auth/login', data=user_data)
-
-    def create_bucketlist(self, access_token):
-        """Create a new bucketlist to test activities
-        """
-        result = self.client().post('/bucketlists/',
-                                    headers=dict(Authorization="Bearer " + access_token),
-                                    data=self.bucketlist)
-        self.assertEqual(result.status_code, 201)
-        self.assertIn('list1', str(result.data))
-
-
     def test_bucketlist_item_creation(self):
         """Test API can create an bucketlist_item (POST)
         """
@@ -136,14 +90,6 @@ class BucketlistItemTestCase(unittest.TestCase):
             '/bucketlists/1/items/1',
             headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(new_result.status_code, 404)
-
-    def tearDown(self):
-        """Tear down initialized variables
-        """
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
 
 # make the tests executable
 if __name__ == "__main__":

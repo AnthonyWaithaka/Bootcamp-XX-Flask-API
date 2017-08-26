@@ -1,27 +1,11 @@
 # /test/test_auth.py
 
-import unittest
 import json
-from app.app import create_app, db
+from base import *
 
-class AuthTestCase(unittest.TestCase):
+class AuthTestCase(BaseTest):
     """Several test cases for authentication blueprint
     """
-    def setUp(self):
-        """Initialize test variables
-        """
-        self.app = create_app(config_name="testing")
-        self.client = self.app.test_client
-        self.user_data = {
-            'name': 'guy',
-            'email': 'guy@yes.com',
-            'password': 'test_password'
-        }
-        with self.app.app_context():
-            db.session.close()
-            db.drop_all()
-            db.create_all()
-
     def test_registration(self):
         """Test user registration is successful
         """
@@ -94,11 +78,3 @@ class AuthTestCase(unittest.TestCase):
             'password':'newstuff'
         })
         self.assertEqual(login_result.status_code, 200)
-
-    def tearDown(self):
-        """Tear down initialized variables
-        """
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
