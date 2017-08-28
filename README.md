@@ -1,8 +1,10 @@
 # Bootcamp-XX-Flask-API
 Challenge 3 project for Andela Bootcamp XX
-[![Build Status](https://travis-ci.org/AnthonyGW/Bootcamp-XX-Flask-API.svg?branch=feedback)](https://travis-ci.org/AnthonyGW/Bootcamp-XX-Flask-API)
 
+#
+[![Build Status](https://travis-ci.org/AnthonyGW/Bootcamp-XX-Flask-API.svg?branch=feedback)](https://travis-ci.org/AnthonyGW/Bootcamp-XX-Flask-API) 
 [![Coverage Status](https://coveralls.io/repos/github/AnthonyGW/Bootcamp-XX-Flask-API/badge.svg?branch=feedback)](https://coveralls.io/github/AnthonyGW/Bootcamp-XX-Flask-API?branch=feedback)
+
 
 The API can be run on a flask server
 Set the flask app environment variable to `run.py` using `set FLASK_APP=run.py` or `export FLASK_APP=run.py`
