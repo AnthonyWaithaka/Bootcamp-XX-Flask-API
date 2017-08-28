@@ -26,8 +26,10 @@ def authentication_required(request_method):
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
                 bucketlist = Bucketlist.query.filter_by(id=kwargs['list_id']).first()
+                if bucketlist is None:
+                    return make_response(jsonify({'message':'Bucketlist does not exist'})), 404
                 if bucketlist.user_id != user_id:
-                    return make_response(jsonify({'message':'Unauthorized access to this bucketlist.'}))
+                    return make_response(jsonify({'message':'Unauthorized access to this bucketlist.'})), 401
                 # user has been authenticated
                 return request_method(*args, **kwargs)
             else:
@@ -48,16 +50,47 @@ class ActivitiesView(MethodView):
         """
         activities = BucketlistItem.query.filter_by(bucketlist_id=list_id)
         results = []
+        if request.args.get('limit'):
+            limit_param = int(request.args.get('limit'))
+        else:
+            limit_param = 10
+        
+        if request.args.get('page'):
+            page_param = int(request.args.get('page'))
+        else:
+            page_param = 0
 
-        for bucketlist_item in activities:
-            obj = {
-                'id':bucketlist_item.id,
-                'bucketlist_id':bucketlist_item.bucketlist_id,
-                'name':bucketlist_item.bucketlist_item_name,
-                'description':bucketlist_item.bucketlist_item_description
-            }
-            results.append(obj)
-        response = jsonify(results)
+        if request.args.get('q'):
+            search_param = request.args.get('q')
+            for bucketlist_item in activities:
+                if search_param.lower() in bucketlist_item.bucketlist_item_name.lower():
+                    obj = {
+                    'id':bucketlist_item.id,
+                    'bucketlist_id':bucketlist_item.bucketlist_id,
+                    'name':bucketlist_item.bucketlist_item_name,
+                    'description':bucketlist_item.bucketlist_item_description
+                    }
+                    results.append(obj)
+        else:
+            #Otherwise return all
+            for bucketlist_item in activities:
+                obj = {
+                    'id':bucketlist_item.id,
+                    'bucketlist_id':bucketlist_item.bucketlist_id,
+                    'name':bucketlist_item.bucketlist_item_name,
+                    'description':bucketlist_item.bucketlist_item_description
+                }
+                results.append(obj)
+
+        if results == []:
+            return make_response({'message':'No items in this bucketlist found.'}), 404
+
+        split_results = results[(page_param*limit_param):((page_param*limit_param)+limit_param)]
+
+        if split_results == []:
+            return make_response({'message':'Page does not exist.'}), 404
+
+        response = jsonify(split_results)
         response.status_code = 200
         return response
 
