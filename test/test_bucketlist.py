@@ -84,7 +84,6 @@ class BucketlistTestCase(BaseTest):
         result = self.login_user()
         access_token = json.loads(result.data.decode())['access_token']
         result = self.create_bucketlist(access_token)
-        result_json = json.loads(result.data.decode())
         search_result = self.client().get('/bucketlists/?q=l',
                                            headers=dict(Authorization="Bearer " + access_token))
         self.assertIn('list1', str(search_result.data))
