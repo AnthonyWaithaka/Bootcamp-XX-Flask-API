@@ -46,21 +46,49 @@ class BucketListsView(MethodView):
         """
         bucketlists = Bucketlist.query.filter_by(user_id=user_id)
         results = []
+        if request.args.get('limit'):
+            limit_param = int(request.args.get('limit'))
+        else:
+            limit_param = 10
+        
+        if request.args.get('page'):
+            page_param = int(request.args.get('page'))
+        else:
+            page_param = 0
 
-        for bucketlist in bucketlists:
-            obj = {
-                'user':bucketlist.user_id,
-                'id':bucketlist.id,
-                'name':bucketlist.bucketlist_name,
-                'date':bucketlist.deadline_date,
-                'description':bucketlist.bucketlist_description
-            }
-            results.append(obj)
+        if request.args.get('q'):
+            search_param = request.args.get('q')
+            for bucketlist in bucketlists:
+                if search_param.lower() in bucketlist.bucketlist_name.lower():
+                    obj = {
+                        'user':bucketlist.user_id,
+                        'id':bucketlist.id,
+                        'name':bucketlist.bucketlist_name,
+                        'date':bucketlist.deadline_date,
+                        'description':bucketlist.bucketlist_description
+                    }
+                    results.append(obj)
+        else:
+            #Otherwise return all
+            for bucketlist in bucketlists:
+                obj = {
+                    'user':bucketlist.user_id,
+                    'id':bucketlist.id,
+                    'name':bucketlist.bucketlist_name,
+                    'date':bucketlist.deadline_date,
+                    'description':bucketlist.bucketlist_description
+                }
+                results.append(obj)
 
         if results == []:
-            return make_response({'message':'No bucketlists to view'}), 204
+            return make_response({'message':'No bucketlists found.'}), 404
 
-        response = jsonify(results)
+        split_results = results[(page_param*limit_param):((page_param*limit_param)+limit_param)]
+
+        if split_results == []:
+            return make_response({'message':'Page does not exist.'}), 404
+
+        response = jsonify(split_results)
         response.status_code = 200
         return response
 
