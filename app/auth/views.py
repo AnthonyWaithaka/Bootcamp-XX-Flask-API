@@ -1,5 +1,6 @@
 # /app/auth/views.py
 
+import re
 from flask import Blueprint
 
 auth_blueprint = Blueprint('auth', __name__)
@@ -20,8 +21,26 @@ class RegistrationView(MethodView):
             try:
                 post_data = request.data
                 username = post_data['name']
-                email = post_data['email']
+                email = post_data['email'].lower()
                 password = post_data['password']
+                # ^ to match at the beginning of the line,
+                # class with a-z for lowercase alphabet, 0-9 for numerals, underscore and hyphen.
+                # grouping () to match a period, followed by the same characters as before the period.
+                # * match one or more repetitions of the above.
+                # match the character @.
+                # match characters a-z, 0-9 and hyphen
+                # match a group of characters: period '.', followed by a-z, 0-9 and hyphen.
+                # * match one or more repetitions of the above group.
+                # match a group of characters: period '.', followed by a-z.
+                # restrict match of the above group of characters from minimum two to maximum four.
+                # $ match the above group at the end of the line (e.g .com). Any more characters are invalid.
+                match = re.match(
+                    '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
+                    email)
+
+                if match is None:
+                    return make_response(jsonify({'message':'Invalid email address.'})), 400
+
                 user = User(name=username, email=email, password=password)
                 user.save()
 
@@ -47,7 +66,7 @@ class LoginView(MethodView):
         """POST request handling to generate user access token
         """
         try:
-            user = User.query.filter_by(email=request.data['email']).first()
+            user = User.query.filter_by(email=request.data['email'].lower()).first()
             if user and user.password_is_valid(request.data['password']):
                 access_token = user.generate_token(user.id)
                 if access_token:
@@ -97,7 +116,7 @@ class ResetPassword(MethodView):
     """Handle user request password
     """
     def post(self):
-        email = request.data['email']
+        email = request.data['email'].lower()
         old_password = request.data['old_password']
         new_password = request.data['new_password']
         user = User.query.filter_by(email=email).first()
