@@ -81,6 +81,18 @@ class BucketlistItemTestCase(BaseTest):
             headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(new_result.status_code, 404)
 
+    def test_bucketlist_item_search(self):
+        self.register_user()
+        result = self.login_user()
+        access_token = json.loads(result.data.decode())['access_token']
+        result = self.create_bucketlist(access_token)
+        item_result = self.client().post('/bucketlists/1/items',
+                                     headers=dict(Authorization="Bearer " + access_token),
+                                     data=self.bucketlist_item1)
+        search_result = self.client().get('/bucketlists/1/items?q=item1',
+                                    headers=dict(Authorization="Bearer " + access_token))
+        self.assertIn('Do stuff', str(search_result.data))
+
 # make the tests executable
 if __name__ == "__main__":
     unittest.main()
