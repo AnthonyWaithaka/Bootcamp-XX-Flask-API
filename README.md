@@ -19,8 +19,8 @@ port `5432`
 The complete documentation is available on the endpoint, `/apidocs`
 
 ## Current Features:
-| Feature | Endpoint | Method | Data 
-| --- | --- | --- | --- |
+Feature | Endpoint | Method | Data 
+--- | --- | --- | ---
 1. Register a new user account | `/auth/register` | `[POST]` | name, email, password
 2. Log in with the registered user account | `/auth/login` | `[POST]` | email, password
 3. Log out from the current user account | `/auth/logout` | `[POST]` | Authentication Header
