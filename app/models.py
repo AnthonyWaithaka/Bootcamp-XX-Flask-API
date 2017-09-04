@@ -1,7 +1,7 @@
 # /app/models.py
 """Application models for database population
 """
-from app import db
+from app.app import db
 from flask_bcrypt import Bcrypt
 from flask import current_app
 import jwt
@@ -105,7 +105,7 @@ class Bucketlist(db.Model):
     bucketlist_name = db.Column(db.String(255))
     deadline_date = db.Column(db.String(255))
     bucketlist_description = db.Column(db.String(255))
-    activities = db.relationship('Activity', order_by='Activity.id', cascade="all, delete-orphan")
+    activities = db.relationship('BucketlistItem', order_by='BucketlistItem.id', cascade="all, delete-orphan")
 
     def __init__(self, created_by, name, date, description):
         """Initialize bucketlist with name, deadline date and description
@@ -138,37 +138,37 @@ class Bucketlist(db.Model):
         """
         return "<Bucketlist: {}>".format(self.name)
 
-class Activity(db.Model):
-    """Activity table class
+class BucketlistItem(db.Model):
+    """BucketlistItem table class
     """
-    __tablename__ = "activity"
+    __tablename__ = "bucketlist_item"
 
     id = db.Column(db.Integer, primary_key=True)
-    activity_name = db.Column(db.String(255))
-    activity_description = db.Column(db.String(255))
+    bucketlist_item_name = db.Column(db.String(255))
+    bucketlist_item_description = db.Column(db.String(255))
     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id'))
 
     def __init__(self, created_by, name, description):
-        """Initialize activity with bucketlist_id, name and description
+        """Initialize bucketlist_item with bucketlist_id, name and description
         """
-        self.activity_name = name
-        self.activity_description = description
+        self.bucketlist_item_name = name
+        self.bucketlist_item_description = description
         self.bucketlist_id = created_by
 
     def save(self):
-        """Store new activity into database
+        """Store new bucketlist_item into database
         """
         db.session.add(self)
         db.session.commit()
 
     @staticmethod
     def get_all():
-        """Return all activity entries in database
+        """Return all bucketlist_item entries in database
         """
-        return Activity.query.all()
+        return BucketlistItem.query.all()
 
     def delete(self):
-        """Delete an activity from the database
+        """Delete an bucketlist_item from the database
         """
         db.session.delete(self)
         db.session.commit()
@@ -176,4 +176,4 @@ class Activity(db.Model):
     def __repr__(self):
         """Object instance of the class when it is queried
         """
-        return "<Activity: {}>".format(self.name)
+        return "<BucketlistItem: {}>".format(self.name)
