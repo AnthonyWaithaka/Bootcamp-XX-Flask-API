@@ -7,7 +7,7 @@ from flasgger import Swagger
 
 from app.app import create_app
 
-app = create_app('development')
+app = create_app('production')
 swagger = Swagger(app)
 
 @app.route('/auth/register', methods=['POST'])
