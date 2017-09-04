@@ -4,10 +4,10 @@ import os
 import unittest
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from app import db, create_app
+from app.app import db, create_app
 from app import models
 
-app = create_app(config_name=os.getenv('APP_SETTINGS'))
+app = create_app(config_name=os.getenv('APP_SETTINGS','development'))
 migrate = Migrate(app, db)
 manager = Manager(app)
 

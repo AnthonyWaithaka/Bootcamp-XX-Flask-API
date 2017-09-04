@@ -13,7 +13,7 @@ class Config(object):
     """
     DEBUG = False
     CSRF_ENABLED = True
-    SECRET = os.getenv('SECRET')
+    SECRET = os.getenv('SECRET', "s1d24i67j8J12*#NCd8q32i@&*@&HID*WJD")
     POSTGRES = {
         'user': 'postgres',
         'pw': None,
