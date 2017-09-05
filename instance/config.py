@@ -21,8 +21,9 @@ class Config(object):
         'host': 'localhost',
         'port': '5432',
     }
-    SQLALCHEMY_DATABASE_URI = 'postgresql://%(user)s:\
-    %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+    SQLALCHEMY_DATABASE_URI = 'postgres://sicxvryjypbwar:e9cbb7b9a96329c2d040e30d5c37041c6f7cba6b84473bc4dee2a350c9420308@ec2-54-163-227-202.compute-1.amazonaws.com:5432/dd1vgtpq2iu0q9'
+    #'postgresql://%(user)s:\
+    #%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 
 class DevelopmentConfig(Config):
     """Development configurations
@@ -56,7 +57,7 @@ class ProductionConfig(Config):
     """
     DEBUG = False
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.getenv('HEROKU_POSTGRESQL_JADE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
 app_config = {
     'development': DevelopmentConfig,
