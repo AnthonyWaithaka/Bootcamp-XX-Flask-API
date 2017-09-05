@@ -6,6 +6,7 @@ from flask import Flask
 from flasgger import Swagger
 
 from app.app import create_app
+import os
 
 app = create_app('production')
 swagger = Swagger(app)
