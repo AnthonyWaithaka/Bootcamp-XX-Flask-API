@@ -59,6 +59,14 @@ class RegistrationView(MethodView):
             }
             return make_response(jsonify(response)), 202
 
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return make_response(jsonify(response)), 200
+
 class LoginView(MethodView):
     """Handle user login and access token generation
     """
@@ -74,7 +82,11 @@ class LoginView(MethodView):
                         'message':'Logged in successfully.',
                         'access_token':access_token.decode()
                     }
-                    return make_response(jsonify(response)), 200
+                    response = make_response(jsonify(response))
+                    response.headers['Access-Control-Allow-Origin'] = "*"
+                    response.headers['Access-Control-Allow-Credentials'] = True
+                    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+                    return response, 200
             else:
                 response = {
                     'message':'Invalid email or password. Try again.'
@@ -86,6 +98,14 @@ class LoginView(MethodView):
                 'message': str(e)
             }
             return make_response(jsonify(response)), 500
+
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return make_response(jsonify(response)), 200
 
 class LogoutView(MethodView):
     """Handle user logout and revoke access token
@@ -138,12 +158,12 @@ reset_view = ResetPassword.as_view('reset_view')
 auth_blueprint.add_url_rule(
     '/auth/register',
     view_func=registration_view,
-    methods=['POST'])
+    methods=['POST', 'OPTIONS'])
 
 auth_blueprint.add_url_rule(
     '/auth/login',
     view_func=login_view,
-    methods=['POST'])
+    methods=['POST', 'OPTIONS'])
 
 auth_blueprint.add_url_rule(
     '/auth/logout',
