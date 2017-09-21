@@ -8,7 +8,7 @@ auth_blueprint = Blueprint('auth', __name__)
 from flask.views import MethodView
 from flask import make_response, request, jsonify
 from app.models import User, Blacklist
-
+from app.crossdomain import crossdomain
 
 class RegistrationView(MethodView):
     """Register a new user account
@@ -47,7 +47,8 @@ class RegistrationView(MethodView):
                 response = {
                     'message': 'User %s %s registered successfully. Please Log in.' %(username, email)
                 }
-                return make_response(jsonify(response)), 201
+                return crossdomain(response, 'post'), 201
+
             except Exception as e:
                 response = {
                     'message': str(e)
@@ -65,7 +66,7 @@ class RegistrationView(MethodView):
         response = {
             'message': 'CORS Authorization'
         }
-        return make_response(jsonify(response)), 200
+        return crossdomain(response, 'options'), 200
 
 class LoginView(MethodView):
     """Handle user login and access token generation
@@ -82,17 +83,12 @@ class LoginView(MethodView):
                         'message':'Logged in successfully.',
                         'access_token':access_token.decode()
                     }
-                    response = make_response(jsonify(response))
-                    response.headers['Access-Control-Allow-Origin'] = "*"
-                    response.headers['Access-Control-Allow-Credentials'] = True
-                    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-                    return response, 200
+                    return crossdomain(response, 'post'), 200
             else:
                 response = {
                     'message':'Invalid email or password. Try again.'
                 }
-                return make_response(jsonify(response)), 401
-            
+                return crossdomain(response), 401            
         except Exception as e:
             response = {
                 'message': str(e)
@@ -105,13 +101,13 @@ class LoginView(MethodView):
         response = {
             'message': 'CORS Authorization'
         }
-        return make_response(jsonify(response)), 200
+        return crossdomain(response, 'options'), 200
 
 class LogoutView(MethodView):
     """Handle user logout and revoke access token
     """
     def post(self):
-        """GET request handling for current user logout
+        """POST request handling for current user logout
         """
         auth_header = request.headers.get('Authorization')
         access_token = auth_header.split(" ")[1]
@@ -124,7 +120,7 @@ class LogoutView(MethodView):
                     response = {
                         'message':'Logged out successfully.'
                     }
-                    return make_response(jsonify(response)), 200
+                    return crossdomain(response, 'post'), 200
                 else:
                     response = {'message':'Token not valid. Please log in again.'}
                     return make_response(jsonify(response)), 401
@@ -144,7 +140,7 @@ class ResetPassword(MethodView):
             result = user.reset_password(email, new_password)
             if result:
                 response = {'message':'Reset password successfully'}
-                return make_response(jsonify(response)), 200
+                return crossdomain(response, 'post'), 200
             else:
                 response = {'message':'Password reset failed'}
                 return make_response(jsonify(response)), 501
