@@ -89,9 +89,10 @@ class BucketListsView(MethodView):
         if split_results == []:
             return make_response({'message':'Page does not exist.'}), 404
 
-        response = jsonify(split_results)
-        response.status_code = 200
-        return response
+        return crossdomain(split_results, 'get'), 200
+        # response = jsonify(split_results)
+        # response.status_code = 200
+        # return response
 
     @authentication_required
     def post(self):
@@ -104,15 +105,16 @@ class BucketListsView(MethodView):
         if name:
             bucketlist = Bucketlist(user_id, name, date, description)
             bucketlist.save()
-            response = jsonify({
+            response = {
                 'user':bucketlist.user_id,
                 'id':bucketlist.id,
                 'name':bucketlist.bucketlist_name,
                 'date':bucketlist.deadline_date,
                 'description':bucketlist.bucketlist_description
-            })
-            response.status_code = 201
-            return response
+            }
+            return crossdomain(response, 'post'), 201
+            # response.status_code = 201
+            # return response
 
 class BucketListsManipulationView(MethodView):
     """Request handling for manipulating the bucketlists
