@@ -179,7 +179,7 @@ class BucketListsManipulationView(MethodView):
     response = {
         'message': 'CORS Authorization'
     }
-    return crossdomain(response, 'options'), 200
+    return make_response(jsonify(response)), 200
 
 bucketlists_view = BucketListsView.as_view('bucketlists_view')
 bucketlistsmanip_view = BucketListsManipulationView.as_view('bucketlistsmanip_view')
