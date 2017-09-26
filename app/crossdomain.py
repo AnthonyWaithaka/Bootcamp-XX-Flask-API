@@ -20,6 +20,6 @@ def crossdomain(request_response, request_method='get'):
     elif request_method == 'delete':
         response.headers['Access-Control-Allow-Methods'] = 'DELETE'
     elif request_method == 'options':
-        response.headers['Access-Control-Allow-Methods'] = 'OPTIONS'
+        response.headers['Access-Control-Allow-Methods'] = 'OPTIONS, GET, POST, PUT, DELETE'
 
     return response
