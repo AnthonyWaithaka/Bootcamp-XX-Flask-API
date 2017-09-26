@@ -118,9 +118,18 @@ class BucketListsView(MethodView):
             response.headers['Access-Control-Allow-Origin'] = "*"
             response.headers['Access-Control-Allow-Credentials'] = True
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-            response.headers['Access-Control-Allow-Methods'] = 'GET'
+            response.headers['Access-Control-Allow-Methods'] = 'POST'
             response.status_code = 201
             return response
+    
+    @authentication_required
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return crossdomain(response, 'options'), 200
 
 class BucketListsManipulationView(MethodView):
     """Request handling for manipulating the bucketlists
@@ -188,7 +197,7 @@ bucketlistsmanip_view = BucketListsManipulationView.as_view('bucketlistsmanip_vi
 bucketlist_blueprint.add_url_rule(
     '/bucketlists/',
     view_func=bucketlists_view,
-    methods=['GET', 'POST'])
+    methods=['GET', 'POST', 'OPTIONS'])
 
 bucketlist_blueprint.add_url_rule(
     '/bucketlists/<int:list_id>',
