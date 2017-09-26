@@ -11,6 +11,7 @@ from flask.views import MethodView
 from flask import make_response, request, jsonify, abort
 from app.models import Bucketlist, User, Blacklist
 from app.app import user_id
+from app.crossdomain import crossdomain
 
 def authentication_required(request_method):
     def wrapper(*args, **kwargs):
@@ -171,6 +172,14 @@ class BucketListsManipulationView(MethodView):
             })
             response.status_code = 200
             return response
+
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+    """
+    response = {
+        'message': 'CORS Authorization'
+    }
+    return crossdomain(response, 'options'), 200
 
 bucketlists_view = BucketListsView.as_view('bucketlists_view')
 bucketlistsmanip_view = BucketListsManipulationView.as_view('bucketlistsmanip_view')

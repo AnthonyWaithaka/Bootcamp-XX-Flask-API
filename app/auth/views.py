@@ -66,7 +66,8 @@ class RegistrationView(MethodView):
         response = {
             'message': 'CORS Authorization'
         }
-        return crossdomain(response, 'options'), 200
+        # return crossdomain(response, 'options'), 200
+        return make_response(jsonify(response)), 200
 
 class LoginView(MethodView):
     """Handle user login and access token generation
@@ -127,6 +128,14 @@ class LogoutView(MethodView):
         except Exception as e:
             response = {'message':str(e)}
             return make_response(jsonify(response)), 500
+    
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return crossdomain(response, 'options'), 200
 
 class ResetPassword(MethodView):
     """Handle user request password
@@ -144,6 +153,14 @@ class ResetPassword(MethodView):
             else:
                 response = {'message':'Password reset failed'}
                 return make_response(jsonify(response)), 501
+    
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return crossdomain(response, 'options'), 200
 
 registration_view = RegistrationView.as_view('registration_view')
 login_view = LoginView.as_view('login_view')
@@ -164,11 +181,11 @@ auth_blueprint.add_url_rule(
 auth_blueprint.add_url_rule(
     '/auth/logout',
     view_func=logout_view,
-    methods=['POST']
+    methods=['POST', 'OPTIONS']
 )
 
 auth_blueprint.add_url_rule(
     '/auth/reset-password',
     view_func=reset_view,
-    methods=['POST']
+    methods=['POST', 'OPTIONS']
 )
