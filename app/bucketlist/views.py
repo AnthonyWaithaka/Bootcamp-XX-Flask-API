@@ -108,13 +108,13 @@ class BucketListsView(MethodView):
         if name:
             bucketlist = Bucketlist(user_id, name, date, description)
             bucketlist.save()
-            response = {
+            response = jsonify({
                 'user':bucketlist.user_id,
                 'id':bucketlist.id,
                 'name':bucketlist.bucketlist_name,
                 'date':bucketlist.deadline_date,
                 'description':bucketlist.bucketlist_description
-            }
+            })
             response.headers['Access-Control-Allow-Origin'] = "*"
             response.headers['Access-Control-Allow-Credentials'] = True
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
@@ -141,8 +141,16 @@ class BucketListsManipulationView(MethodView):
             abort(404)
         else:
             bucketlist.delete()
-            return {
-                "message":"bucketlist {} deleted successfully".format(bucketlist.id)}, 200
+            response = jsonify({
+                "message":"bucketlist {} deleted successfully".format(bucketlist.id)})
+            response.status_code = 200
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'DELETE'
+            return response
+            # return {
+            #     "message":"bucketlist {} deleted successfully".format(bucketlist.id)}, 200
 
     @authentication_required
     def put(self, list_id):
@@ -167,6 +175,10 @@ class BucketListsManipulationView(MethodView):
                 'description': bucketlist.bucketlist_description,
                 'user_id': bucketlist.user_id
             })
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'PUT'
             response.status_code = 200
             return response
 
@@ -187,7 +199,19 @@ class BucketListsManipulationView(MethodView):
                 'description': bucketlist.bucketlist_description
             })
             response.status_code = 200
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'GET'
             return response
+    
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return crossdomain(response, 'options'), 200
 
 bucketlists_view = BucketListsView.as_view('bucketlists_view')
 bucketlistsmanip_view = BucketListsManipulationView.as_view('bucketlistsmanip_view')
@@ -201,4 +225,4 @@ bucketlist_blueprint.add_url_rule(
 bucketlist_blueprint.add_url_rule(
     '/bucketlists/<int:list_id>',
     view_func=bucketlistsmanip_view,
-    methods=['DELETE', 'PUT','GET'])
+    methods=['DELETE', 'PUT', 'GET', 'OPTIONS'])

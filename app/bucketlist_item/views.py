@@ -11,6 +11,7 @@ from flask.views import MethodView
 from flask import make_response, request, jsonify, abort
 from app.models import Bucketlist, User, BucketlistItem, Blacklist
 from app.app import user_id
+from app.crossdomain import crossdomain
 
 def authentication_required(request_method):
     def wrapper(*args, **kwargs):
@@ -91,6 +92,10 @@ class ActivitiesView(MethodView):
             return make_response({'message':'Page does not exist.'}), 404
 
         response = jsonify(split_results)
+        response.headers['Access-Control-Allow-Origin'] = "*"
+        response.headers['Access-Control-Allow-Credentials'] = True
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response.headers['Access-Control-Allow-Methods'] = 'GET'
         response.status_code = 200
         return response
 
@@ -111,7 +116,19 @@ class ActivitiesView(MethodView):
                 'description':bucketlist_item.bucketlist_item_description
             })
             response.status_code = 201
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'POST'
             return response
+
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return crossdomain(response, 'options'), 200
 
 class ActivitiesManipulationView(MethodView):
     """Request handling for manipulating bucketlist items
@@ -126,8 +143,15 @@ class ActivitiesManipulationView(MethodView):
             abort(404)
         else:
             bucketlist_item.delete()
-            return {
-                "message":"bucketlist_item {} deleted successfully".format(bucketlist_item.id)}, 200
+            response = jsonify({
+                "message":"bucketlist_item {} deleted successfully".format(bucketlist_item.id)})
+            response.status_code = 200
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'DELETE'
+            # return {
+            #     "message":"bucketlist_item {} deleted successfully".format(bucketlist_item.id)}, 200
 
     @authentication_required
     def put(self, list_id, item_id):
@@ -149,7 +173,12 @@ class ActivitiesManipulationView(MethodView):
                 'name': bucketlist_item.bucketlist_item_name,
                 'description': bucketlist_item.bucketlist_item_description
             })
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'PUT'
             response.status_code = 200
+            
             return response
 
     @authentication_required
@@ -168,7 +197,19 @@ class ActivitiesManipulationView(MethodView):
                 'description': bucketlist_item.bucketlist_item_description
             })
             response.status_code = 200
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            response.headers['Access-Control-Allow-Methods'] = 'GET'
             return response
+
+    def options(self):
+        """OPTIONS request handling for Cross Origin Resource Sharing default
+        """
+        response = {
+            'message': 'CORS Authorization'
+        }
+        return crossdomain(response, 'options'), 200
 
 activities_view = ActivitiesView.as_view('activities_view')
 activitiesmanip_view = ActivitiesManipulationView.as_view('activitiesmanip_view')
@@ -177,9 +218,9 @@ activitiesmanip_view = ActivitiesManipulationView.as_view('activitiesmanip_view'
 bucketlist_item_blueprint.add_url_rule(
     '/bucketlists/<int:list_id>/items',
     view_func=activities_view,
-    methods=['GET', 'POST'])
+    methods=['GET', 'POST', 'OPTIONS'])
 
 bucketlist_item_blueprint.add_url_rule(
     '/bucketlists/<int:list_id>/items/<int:item_id>',
     view_func=activitiesmanip_view,
-    methods=['DELETE', 'PUT', 'GET'])
+    methods=['DELETE', 'PUT', 'GET', 'OPTIONS'])
