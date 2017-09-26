@@ -102,7 +102,7 @@ class LoginView(MethodView):
         response = {
             'message': 'CORS Authorization'
         }
-        return crossdomain(response, 'options'), 200
+        return make_response(jsonify(response)), 200
 
 class LogoutView(MethodView):
     """Handle user logout and revoke access token
@@ -135,7 +135,7 @@ class LogoutView(MethodView):
         response = {
             'message': 'CORS Authorization'
         }
-        return crossdomain(response, 'options'), 200
+        return make_response(jsonify(response)), 200
 
 class ResetPassword(MethodView):
     """Handle user request password
@@ -160,7 +160,7 @@ class ResetPassword(MethodView):
         response = {
             'message': 'CORS Authorization'
         }
-        return crossdomain(response, 'options'), 200
+        return make_response(jsonify(response)), 200
 
 registration_view = RegistrationView.as_view('registration_view')
 login_view = LoginView.as_view('login_view')
