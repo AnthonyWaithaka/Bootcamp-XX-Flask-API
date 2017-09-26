@@ -173,14 +173,6 @@ class BucketListsManipulationView(MethodView):
             response.status_code = 200
             return response
 
-    def options(self):
-        """OPTIONS request handling for Cross Origin Resource Sharing default
-    """
-    response = {
-        'message': 'CORS Authorization'
-    }
-    return make_response(jsonify(response)), 200
-
 bucketlists_view = BucketListsView.as_view('bucketlists_view')
 bucketlistsmanip_view = BucketListsManipulationView.as_view('bucketlistsmanip_view')
 
