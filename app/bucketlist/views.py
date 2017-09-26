@@ -89,10 +89,13 @@ class BucketListsView(MethodView):
         if split_results == []:
             return make_response({'message':'Page does not exist.'}), 404
 
-        return crossdomain(split_results, 'get'), 200
-        # response = jsonify(split_results)
-        # response.status_code = 200
-        # return response
+        response = jsonify(split_results)
+        response.headers['Access-Control-Allow-Origin'] = "*"
+        response.headers['Access-Control-Allow-Credentials'] = True
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        response.headers['Access-Control-Allow-Methods'] = 'GET'
+        response.status_code = 200
+        return response
 
     @authentication_required
     def post(self):
@@ -112,9 +115,12 @@ class BucketListsView(MethodView):
                 'date':bucketlist.deadline_date,
                 'description':bucketlist.bucketlist_description
             }
-            return crossdomain(response, 'post'), 201
-            # response.status_code = 201
-            # return response
+            response.headers['Access-Control-Allow-Origin'] = "*"
+            response.headers['Access-Control-Allow-Credentials'] = True
+            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+            response.headers['Access-Control-Allow-Methods'] = 'GET'
+            response.status_code = 201
+            return response
 
 class BucketListsManipulationView(MethodView):
     """Request handling for manipulating the bucketlists
