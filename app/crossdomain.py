@@ -9,7 +9,7 @@ def crossdomain(request_response, request_method='get'):
     response = make_response(jsonify(request_response))
     response.headers['Access-Control-Allow-Origin'] = "*"
     response.headers['Access-Control-Allow-Credentials'] = True
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     
     if request_method == 'get':    
         response.headers['Access-Control-Allow-Methods'] = 'GET'
