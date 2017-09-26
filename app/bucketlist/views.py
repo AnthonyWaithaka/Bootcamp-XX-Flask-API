@@ -122,7 +122,6 @@ class BucketListsView(MethodView):
             response.status_code = 201
             return response
     
-    @authentication_required
     def options(self):
         """OPTIONS request handling for Cross Origin Resource Sharing default
         """
