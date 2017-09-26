@@ -205,7 +205,7 @@ class BucketListsManipulationView(MethodView):
             response.headers['Access-Control-Allow-Methods'] = 'GET'
             return response
     
-    def options(self):
+    def options(self, list_id):
         """OPTIONS request handling for Cross Origin Resource Sharing default
         """
         response = {

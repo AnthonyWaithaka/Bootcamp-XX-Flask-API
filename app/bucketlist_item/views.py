@@ -122,7 +122,7 @@ class ActivitiesView(MethodView):
             response.headers['Access-Control-Allow-Methods'] = 'POST'
             return response
 
-    def options(self):
+    def options(self, list_id):
         """OPTIONS request handling for Cross Origin Resource Sharing default
         """
         response = {
@@ -203,7 +203,7 @@ class ActivitiesManipulationView(MethodView):
             response.headers['Access-Control-Allow-Methods'] = 'GET'
             return response
 
-    def options(self):
+    def options(self, list_id, item_id):
         """OPTIONS request handling for Cross Origin Resource Sharing default
         """
         response = {
