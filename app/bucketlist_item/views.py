@@ -150,6 +150,7 @@ class ActivitiesManipulationView(MethodView):
             response.headers['Access-Control-Allow-Credentials'] = True
             response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
             response.headers['Access-Control-Allow-Methods'] = 'DELETE'
+            return response
             # return {
             #     "message":"bucketlist_item {} deleted successfully".format(bucketlist_item.id)}, 200
 
