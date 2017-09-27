@@ -85,8 +85,9 @@ class BucketListsView(MethodView):
             return make_response({'message':'No bucketlists found.'}), 404
 
         results = results[::-1]
+        records_length = len(results)
         split_results = results[(page_param*limit_param):((page_param*limit_param)+limit_param)]
-
+        split_results.append({'records_length':records_length})
         if split_results == []:
             return make_response({'message':'Page does not exist.'}), 404
 
