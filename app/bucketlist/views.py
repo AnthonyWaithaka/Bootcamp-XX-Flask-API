@@ -87,7 +87,8 @@ class BucketListsView(MethodView):
         results = results[::-1]
         records_length = len(results)
         split_results = results[(page_param*limit_param):((page_param*limit_param)+limit_param)]
-        split_results.append({'records_length':records_length})
+        total_result = {'bucketlists': split_results, 'records_length': records_length}
+
         if split_results == []:
             return make_response({'message':'Page does not exist.'}), 404
 
