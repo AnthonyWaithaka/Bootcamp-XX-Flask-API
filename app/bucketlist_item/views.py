@@ -86,12 +86,15 @@ class ActivitiesView(MethodView):
         if results == []:
             return make_response({'message':'No items in this bucketlist found.'}), 404
 
+        results = results[::-1]
+        records_length = len(results)
         split_results = results[(page_param*limit_param):((page_param*limit_param)+limit_param)]
+        total_result = {'items': split_results, 'records_length': records_length}
 
         if split_results == []:
             return make_response({'message':'Page does not exist.'}), 404
 
-        response = jsonify(split_results)
+        response = jsonify(total_result)
         response.headers['Access-Control-Allow-Origin'] = "*"
         response.headers['Access-Control-Allow-Credentials'] = True
         response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
